@@ -2,7 +2,7 @@ import { userroute, articleroute } from "./src/controllers";
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const dotenv = require("dotenv");
-const { schema } = require("./src/schema-graphql");
+const { schema, RootQuery } = require("./src/schema-graphql");
 // const typeDefs = require("./src/schema-graphql/schema.graphql");
 const bodyParser = require("body-parser");
 let mongoose = require("mongoose");
@@ -50,6 +50,7 @@ app.use(
   graphqlHTTP({
     schema,
     graphiql: true,
+    rootValue: RootQuery,
   })
 );
 app.use("/user", userroute);

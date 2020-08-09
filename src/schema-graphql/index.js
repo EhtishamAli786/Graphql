@@ -1,10 +1,11 @@
-import { RootQuery as Query } from "./queries";
-import { Mutation } from "./mutations";
-const graphql = require("graphql");
-const { GraphQLSchema } = graphql;
+import { Queries } from "./queries";
+import { Mutations } from "./mutations";
 
 //old schema method
-export const schema = new GraphQLSchema({
-  query: Query,
-  mutation: Mutation,
-});
+export * from "./buildSchema";
+export const RootQuery = {
+  //queries
+  ...Queries,
+  //mutations
+  ...Mutations,
+};
