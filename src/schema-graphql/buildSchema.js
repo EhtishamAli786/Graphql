@@ -4,6 +4,7 @@ type Query {
   articles: [Article]
   article(_id: ID): Article
   allUsers: [User]
+  userAllInfo(userId: ID): UserAllInfo
 }
 type Mutation {
   login(email: String!, password: String!): LoginType
@@ -34,6 +35,20 @@ type User {
   email: String
   password: String
   _id: String
+}
+fragment articlesOfUsers on User{
+  _id: ID
+  title: String
+  created_at: String
+  updated_at: String
+  userId: String
+  minRead: String
+  description: String
+  featuredImage: String
+  footerLinks: [String]
+}
+type UserAllInfo{
+  ...articlesOfUsers
 }
 input AddUserInput {
   fullname: String
