@@ -57,5 +57,6 @@ app.use("/user", userroute);
 app.use("/article", articleroute);
 app.get("*", function (req, res) {
   console.log("Merge request 404 not found");
+  console.log("Request 404 Not found");
   return res.status(404).render("404");
 });
