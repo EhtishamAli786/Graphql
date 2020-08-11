@@ -56,5 +56,6 @@ app.use(
 app.use("/user", userroute);
 app.use("/article", articleroute);
 app.get("*", function (req, res) {
+  console.log("Request 404 Not found");
   return res.status(404).render("404");
 });
