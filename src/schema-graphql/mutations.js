@@ -1,14 +1,12 @@
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utils";
+import { generateAccessToken, LogErrors, SALT_ROUNDS } from "../utils";
 
 const { ArticleModel, UserModel } = require("../models");
 export const Mutations = {
   //auth
   login: async (args) => {
     const { email, password } = args;
-    console.log("email, password", email, password);
     const user = await UserModel.findOne({ email });
-    console.log("user", user);
     try {
       if (!user) {
         return {
@@ -17,29 +15,20 @@ export const Mutations = {
           token: "",
         };
       } else {
-        try {
-          const isMatch = await bcrypt.compare(password, user.password);
-
-          if (isMatch) {
-            const token = generateAccessToken(user._id);
-            return {
-              code: 200,
-              message: "User Found",
-              token,
-            };
-          }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+          const token = generateAccessToken(user._id);
           return {
-            code: 201,
-            message: "Failed to get single user",
-            token: "",
-          };
-        } catch (e) {
-          return {
-            code: 201,
-            message: "Error occured",
-            token: "",
+            code: 200,
+            message: "User Found",
+            token,
           };
         }
+        return {
+          code: 201,
+          message: "Failed to get single user",
+          token: "",
+        };
       }
     } catch (err) {
       if (!!err) {
@@ -51,21 +40,62 @@ export const Mutations = {
       }
     }
   },
-  addUser: (args) => {
+  signUp: async (args) => {
+    const { email, password, fullname } = args;
+    try {
+      const user = await UserModel.findOne({ email });
+      if (user) {
+        return {
+          code: 201,
+          message: "User email exists",
+          token: "",
+        };
+      } else {
+        const salt = await bcrypt.genSalt(SALT_ROUNDS);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const newUser = new UserModel({
+          email,
+          fullname,
+          password: hashedPassword,
+        });
+        const result = await newUser.save();
+        const token = generateAccessToken(result._id);
+        return {
+          code: 200,
+          message: "User Found",
+          token,
+        };
+      }
+    } catch (err) {
+      LogErrors({
+        code: 201,
+        message: err,
+        token: "",
+      });
+    }
+  },
+  addUser: async (args, context) => {
+    const { userId } = await context();
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
     const { fullname, email, password } = args;
     return { fullname, email, password };
   },
 
   // article
-  createArticle: async (args) => {
+  createArticle: async (args, context) => {
     const {
-      userId,
       title,
       minRead,
       description,
       featuredImage,
       footerLinks,
     } = args.input;
+    const { userId } = await context();
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
     const newArticle = new ArticleModel({
       title,
       minRead,
@@ -81,7 +111,11 @@ export const Mutations = {
       return { err: true, err };
     }
   },
-  updateArticle: async (args) => {
+  updateArticle: async (args, context) => {
+    const { userId } = await context();
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
     const { _id: articleId, input } = args;
     if (!input) return { err: true };
     const { title, minRead, description, featuredImage, footerLinks } = input;
@@ -103,7 +137,11 @@ export const Mutations = {
       return { err: true };
     }
   },
-  deleteArticle: async (args) => {
+  deleteArticle: async (args, context) => {
+    const { userId } = await context();
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
     const { _id: articleId } = args;
     try {
       await ArticleModel.findByIdAndDelete(articleId);
@@ -115,8 +153,11 @@ export const Mutations = {
       return { err: true, err, delete: false };
     }
   },
-  deleteAllArticle: async (args) => {
-    const { userId } = args;
+  deleteAllArticle: async (args, context) => {
+    const { userId } = await context();
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
     try {
       await ArticleModel.deleteMany({ userId });
       return {

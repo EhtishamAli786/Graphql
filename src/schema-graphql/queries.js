@@ -1,7 +1,7 @@
 const { ArticleModel, UserModel } = require("../models");
 
 export const Queries = {
-  article: async ({ _id, ...args }) => {
+  article: async ({ _id }) => {
     try {
       const article = await ArticleModel.findById(_id);
       return article;
@@ -10,7 +10,6 @@ export const Queries = {
     }
   },
   userArticles: async ({ userId }) => {
-    console.log("userArticles userId", userId);
     try {
       const article = await ArticleModel.find({ userId });
       return article;
@@ -18,7 +17,7 @@ export const Queries = {
       return { err: true, message: "article fetch error" };
     }
   },
-  articles: async (args) => {
+  articles: async () => {
     try {
       const articleRes = await ArticleModel.find();
       return articleRes;
@@ -26,7 +25,7 @@ export const Queries = {
       return { err: true, message: "articles fetch error" };
     }
   },
-  allUsers: async (args) => {
+  allUsers: async () => {
     try {
       const users = await UserModel.find();
       return users;
@@ -34,10 +33,21 @@ export const Queries = {
       return { err: true, message: "users fetch error" };
     }
   },
-  userAllInfo: async ({ userId }) => {
-    console.log("userId", userId);
+  userAllInfo: async ({ _id }) => {
     try {
-      const user = await UserModel.findById(userId);
+      const user = await UserModel.findById(_id);
+      if (user) {
+        const article = await ArticleModel.find({ userId: _id });
+        user.article = article;
+      }
+      return user;
+    } catch (err) {
+      return { err: true, message: "user fetch error" };
+    }
+  },
+  user: async ({ _id }) => {
+    try {
+      const user = await UserModel.findById(_id);
       return user;
     } catch (err) {
       return { err: true, message: "users fetch error" };

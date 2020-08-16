@@ -3,6 +3,7 @@ import { Mutations } from "./mutations";
 
 //old schema method
 export * from "./buildSchema";
+export * from "./context";
 export const RootQuery = {
   //queries
   ...Queries,
