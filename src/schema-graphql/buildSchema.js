@@ -1,15 +1,15 @@
 const { buildSchema } = require("graphql");
 export const schema = buildSchema(`
   type Query {
-    articles: [Article]
-    article(_id: ID): Article
-    user(_id:ID): User
-    userAllInfo(_id:ID): User
-    allUsers: [User] 
+  articles: [Article]
+  article(_id: ID): Article
+  user(_id: ID): User
+  userAllInfo(_id: ID): User
+  allUsers: [User]
   }
   type Mutation {
     login(email: String!, password: String!): LoginType
-    signUp(email: String!, password: String!, fullname:String!): LoginType
+    signUp(email: String!, password: String!, fullname: String!): LoginType
     addUser(input: AddUserInput!): AddUser
     createArticle(input: CreateArticleInput!): Article
     updateArticle(_id: ID!, input: CreateArticleInput): Article
@@ -38,7 +38,7 @@ export const schema = buildSchema(`
     password: String
     _id: String
     article: [Article]
-  }  
+  }
   input AddUserInput {
     fullname: String
     email: String
@@ -50,7 +50,7 @@ export const schema = buildSchema(`
     password: String
   }
   input CreateArticleInput {
-    title: String 
+    title: String
     minRead: String
     description: String
     featuredImage: String
