@@ -2,7 +2,7 @@ import { userroute, articleroute } from "./src/controllers";
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const dotenv = require("dotenv");
-const { schema, RootQuery } = require("./src/schema-graphql");
+const { schema, RootQuery, context } = require("./src/schema-graphql");
 // const typeDefs = require("./src/schema-graphql/schema.graphql");
 const bodyParser = require("body-parser");
 let mongoose = require("mongoose");
@@ -47,11 +47,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //routes
 app.use(
   "/graphql",
-  graphqlHTTP({
+  graphqlHTTP((req) => ({
     schema,
-    graphiql: true,
+    graphiql: {
+      headerEditorEnabled: true,
+    },
     rootValue: RootQuery,
-  })
+    context: () => context(req),
+    introspection: true,
+    pretty: true,
+  }))
 );
 app.use("/user", userroute);
 app.use("/article", articleroute);
