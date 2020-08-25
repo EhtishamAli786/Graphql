@@ -30,5 +30,8 @@
     "@babel/core": "^7.10.4",
     "@babel/node": "^7.10.4",
     "@babel/preset-env": "^7.10.4"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
