@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec babel-node server.js",
+    "dev": "yarn start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
