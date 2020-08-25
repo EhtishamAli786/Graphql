@@ -7,12 +7,11 @@ const { schema, RootQuery, context } = require("./src/schema-graphql");
 const bodyParser = require("body-parser");
 let mongoose = require("mongoose");
 const chalk = require("chalk");
+dotenv.config();
 //constant
-const mongodbUrl = "mongodb://root:root123@ds225294.mlab.com:25294/wazaifdb";
+const mongodbUrl = `mongodb://${process.env.MONGODBURL}`;
 
 let app = express();
-
-dotenv.config();
 
 //server configs
 app.set("view engine", "ejs");
