@@ -15,8 +15,8 @@ let app = express();
 
 //server configs
 app.set("view engine", "ejs");
-app.listen(3000, () => {
-  console.log(chalk.hex("#ffffff").bold.underline("server running: 3000"));
+app.listen(process.env.PORT || 5000, () => {
+  console.log(chalk.hex("#ffffff").bold.underline("server running: 5000"));
 });
 
 //mongo connection
